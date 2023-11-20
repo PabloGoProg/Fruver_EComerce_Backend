@@ -24,7 +24,7 @@ class SellUpdateRequest extends FormRequest
         return [
             //
             'user_id' => 'exists:users,id',
-            'total_price' => 'float',
+            'total_price' => 'numeric',
             'status' => 'string',
         ];
     }

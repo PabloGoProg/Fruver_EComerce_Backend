@@ -24,9 +24,9 @@ class SellStoreRequest extends FormRequest
         return [
             //
             'user_id' => 'required|exists:users,id',
-            'total_price' => 'required|float',
+            'total_price' => 'required|numeric',
             'status' => 'required|string',
-            //'products' => 'array',
+            'products' => 'array',
             // Check if products exists in the database
             //'products.*' => 'exists:products,id',
 

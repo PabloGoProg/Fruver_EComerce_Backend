@@ -46,8 +46,8 @@ Route::delete('/v1/suppliers/{id}', [App\Http\Controllers\api\v1\SupplierControl
 
 Route::apiResource('v1/sells'
 ,App\Http\Controllers\api\v1\SellController::class);
-/* Route::get('v1/sells', [SellController::class, 'index']);
-Route::post('v1/sells', [SellController::class, 'store']);
-Route::get('v1/sells/{sell}', [SellController::class, 'show']);
-Route::put('v1/sells/{sell}', [SellController::class, 'update']);
-Route::delete('v1/sells/{sell}', [SellController::class, 'destroy']); */
+Route::get('v1/sells/{id_sell}/products/{id_product}', App\Http\Controllers\api\v1\SellController::class.'@showProduct');
+Route::get('v1/products/{id_product}/sells', App\Http\Controllers\api\v1\ProductController::class.'@showProductSells');
+Route::get('v1/sells/{id_sell}/products', App\Http\Controllers\api\v1\SellController::class.'@showSellProducts');
+
+

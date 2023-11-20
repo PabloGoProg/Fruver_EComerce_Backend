@@ -41,6 +41,19 @@ class SellController extends Controller
         $sell->load('products');
         return response()->json(['data' => new SellResource($sell)], 200);
     }
+    public function showSellProducts($id_sell)
+    {
+        $sell = Sell::findOrFail($id_sell);
+        $products = $sell->products;
+        return response()->json(['data' => $products], 200);
+    }
+    public function showProduct($id_sell, $id_product)
+    {
+
+        $sell = Sell::findOrFail($id_sell);
+        $product = $sell->products()->findOrFail($id_product);
+        return response()->json(['sell' => $sell, 'product' => $product]);
+    }
 
     /**
      * Update the specified resource in storage.

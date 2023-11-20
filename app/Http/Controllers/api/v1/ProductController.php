@@ -41,6 +41,13 @@ class ProductController extends Controller
             "data" => new ProductResource($product),
         ], 200);
     }
+    public function showProductSells($id_product)
+    {
+        $product = Product::findOrFail($id_product);
+        $sells = $product->sells;
+        return response()->json(['data' => $sells], 200);
+    }
+
 
     /**
      * Update the specified resource in storage.
