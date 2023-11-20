@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Supplier;
 use App\Http\Resources\api\v1\SupplierResource;
 use App\Http\Requests\api\v1\SupplierUpdateRequest;

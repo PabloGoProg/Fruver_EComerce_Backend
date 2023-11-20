@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Http\Resources\api\v1\UserResource;
 use App\Http\Requests\api\v1\UserStoreRequest;
 use App\Http\Requests\api\v1\UserUpdateRequest;
-use App\Models\Supplier;
 
 class UserController extends Controller
 {

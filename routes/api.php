@@ -18,6 +18,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group([
+
+    'middleware' => 'api',
+    'prefix' => '/v1/auth'
+
+], function ($router) {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+});
+
 Route::get('/v1/users', [App\Http\Controllers\api\v1\UserController::class, 'index']);
 Route::get('/v1/users/{id}', [App\Http\Controllers\api\v1\UserController::class, 'show']);
 Route::post('/v1/users', [App\Http\Controllers\api\v1\UserController::class, 'store']);
