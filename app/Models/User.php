@@ -16,6 +16,27 @@ class User extends Authenticatable //implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_user', 'user_id', 'product_id')
+            ->withPivot('id', 'orderedQuantity');
+    }
+
+    public function supplier()
+    {
+        return $this->hasOne(Supplier::class);
+    }
+
+    public function sells(): HasMany
+    {
+        return $this->hasMany(Sell::class);
+    }
+
+    public function userType(): BelongsTo
+    {
+        return $this->belongsTo(UserType::class, 'user_type');
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -51,27 +72,6 @@ class User extends Authenticatable //implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class, 'product_user', 'user_id', 'product_id')
-            ->withPivot('id', 'orderedQuantity');
-    }
-
-    public function sells(): HasMany
-    {
-        return $this->hasMany(Sell::class);
-    }
-
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
-    }
-
-    public function user_type(): BelongsTo
-    {
-        return $this->belongsTo(UserType::class);
-    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
