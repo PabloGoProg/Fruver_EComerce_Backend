@@ -31,6 +31,12 @@ Route::group([
     Route::post('me', 'AuthController@me');
 });
 
+Route::apiResource('v1/products', App\Http\Controllers\api\v1\ProductController::class);
+Route::apiResource('v1/categories', App\Http\Controllers\api\v1\ProductCategoryController::class);
+Route::apiResource('v1/types', App\Http\Controllers\api\v1\ProductTypeController::class);
+Route::get('v1/products/{id_product}/category', App\Http\Controllers\api\v1\ProductCategoryController::class . '@show');
+Route::get('v1/products/{id_product}/type', App\Http\Controllers\api\v1\ProductTypeController::class . '@show');
+
 Route::get('/v1/users', [App\Http\Controllers\api\v1\UserController::class, 'index']);
 Route::get('/v1/users/{id}', [App\Http\Controllers\api\v1\UserController::class, 'show']);
 Route::post('/v1/users', [App\Http\Controllers\api\v1\UserController::class, 'store']);
