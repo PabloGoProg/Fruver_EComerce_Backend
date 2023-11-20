@@ -17,19 +17,13 @@ class Supplier extends Model
             ->withPivot('id');
     }
 
-    public function user(): HasOne
+    public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     protected $fillable = [
         'name',
-        'email',
-        'password',
-        'phone_number',
-        'address',
-        'user_type',
-        'status',
-        'birthday'
+        'RUT',
     ];
 }
