@@ -1,6 +1,6 @@
 <?php
 
-// comment
+// comment 2
 
 namespace App\Models;
 
