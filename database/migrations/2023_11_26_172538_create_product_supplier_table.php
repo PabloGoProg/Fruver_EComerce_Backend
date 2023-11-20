@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('supplier_id');
             $table->unsignedBigInteger('product_id');
-            $table->$table->timestamps();
+            $table->timestamps();
 
             $table->foreign('supplier_id')
                 ->references('id')
