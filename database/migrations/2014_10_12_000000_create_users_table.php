@@ -21,8 +21,15 @@ return new class extends Migration
             $table->string('address')->nullable()->nullable();
             $table->string('status')->default('active');
             $table->date('birthday')->nullable();
+            $table->unsignedBigInteger('user_type')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('user_type')
+                ->references('id')
+                ->on('user_types')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
         });
     }
 

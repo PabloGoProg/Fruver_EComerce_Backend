@@ -4,7 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -54,6 +56,21 @@ class User extends Authenticatable //implements JWTSubject
     {
         return $this->belongsToMany(Product::class, 'product_user', 'user_id', 'product_id')
             ->withPivot('id', 'orderedQuantity');
+    }
+
+    public function sells(): HasMany
+    {
+        return $this->hasMany(Sell::class);
+    }
+
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function user_type(): BelongsTo
+    {
+        return $this->belongsTo(UserType::class);
     }
 
     /**

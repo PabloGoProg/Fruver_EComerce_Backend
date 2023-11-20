@@ -37,6 +37,12 @@ class Product extends Model
             ->withPivot('id', 'orderedQuantity');
     }
 
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class, 'product_supplier', 'product_id', 'supplier_id')
+            ->withPivot('id');
+    }
+
     protected $fillable = [
         'name',
         'description',

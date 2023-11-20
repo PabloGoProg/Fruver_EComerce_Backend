@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Sell extends Model
@@ -15,6 +16,11 @@ class Sell extends Model
     {
         return $this->belongsToMany(Product::class, 'product_sell', 'sell_id', 'product_id')
             ->withPivot('id', 'orderedQuantity');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     protected $fillable = [
