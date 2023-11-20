@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('quantity')->default(0);
             $table->unsignedBigInteger('category')->nullable();
             $table->unsignedBigInteger('product_type')->nullable();
-            $table->$table->timestamps();
+            $table->timestamps();
 
             $table->foreign('category')
                 ->references('id')
