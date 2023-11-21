@@ -59,7 +59,6 @@ class ProductController extends Controller
             "data"=> new ProductResource($product),
         ],200);
     }
-
     /**
      * Remove the specified resource from storage.
      */
