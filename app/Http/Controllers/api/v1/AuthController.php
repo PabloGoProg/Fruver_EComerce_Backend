@@ -69,7 +69,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        Cookie::forget('Access token');
+        Cookie::forget('accessToken');
 
         return response()->json([
             'message' => 'Successfully logged out'
@@ -94,7 +94,7 @@ class AuthController extends Controller
         /**
          * Remove the cookies with access tokens from the user
          */
-        Cookie::forget('Access token');
+        Cookie::forget('accessToken');
 
         /**
          * Creation of a new token to the user
@@ -117,9 +117,9 @@ class AuthController extends Controller
         return response([
             'message' => 'Sucess login process',
         ], 201)->withCookie(
-            'Access token',
+            'accessToken',
             $token,
-            60,
+            60 * 24 * 7,
             null,
             null,
             false,
