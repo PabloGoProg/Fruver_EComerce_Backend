@@ -4,7 +4,7 @@ namespace App\Http\Requests\api\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SellStoreRequest extends FormRequest
+class SupplierStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,14 +22,9 @@ class SellStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'user_id' => 'required|exists:users,id',
-            'total_price' => 'required|numeric',
-            'status' => 'required|string',
-            'products' => 'array',
-            // Check if products exists in the database
-            'products.*' => 'exists:products,id',
-
+            //que quiere decir unique:suppliers,RUT
+            'RUT' => 'required|string|max:255|unique:suppliers,RUT',
+            'user_id' => 'required|integer|exists:users,id',
         ];
     }
 
@@ -38,16 +33,14 @@ class SellStoreRequest extends FormRequest
      */
     public function messages(): array
     {
-        return
-        [
+        return [
+            'RUT.required' => 'El RUT es requerido',
+            'RUT.string' => 'El RUT debe ser un texto',
+            'RUT.max' => 'El RUT no puede tener mas de 255 caracteres',
+            'RUT.unique' => 'El RUT ya existe',
             'user_id.required' => 'El id del usuario es requerido',
+            'user_id.integer' => 'El id del usuario debe ser un numero',
             'user_id.exists' => 'El id del usuario no existe',
-            'total_price.required' => 'El precio total es requerido',
-            'total_price.numeric' => 'El precio total debe ser un numero',
-            'status.required' => 'El estado es requerido',
-            'status.string' => 'El estado debe ser un texto',
-            'products.array' => 'Los productos deben ser un arreglo',
-            'products.*.exists' => 'El producto no existe',
         ];
     }
 }

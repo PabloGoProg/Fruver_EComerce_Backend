@@ -12,10 +12,15 @@ class Sell extends Model
     use HasFactory;
 
     // Many to Many relationship between Sell and Product
-    public function products(): BelongsToMany
+/*     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'product_sell', 'sell_id', 'product_id')
             ->withPivot('id', 'orderedQuantity');
+    } */
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_sell');
     }
 
     public function user(): BelongsTo

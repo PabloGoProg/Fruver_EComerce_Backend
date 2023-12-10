@@ -30,11 +30,9 @@ class Product extends Model
             ->withPivot('id', 'orderedQuantity');
     }
 
-    // Many to Many relationship between Product and Sells
     public function sells(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'product_sell', 'product_id', 'sell_id')
-            ->withPivot('id', 'orderedQuantity');
+        return $this->belongsToMany(Sell::class, 'product_sell');
     }
 
     public function suppliers(): BelongsToMany

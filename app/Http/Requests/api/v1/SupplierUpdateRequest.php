@@ -30,6 +30,7 @@ class SupplierUpdateRequest extends FormRequest
     {
         return [
             'RUT.unique' => 'El RUT ya existe',
+
         ];
     }
 }

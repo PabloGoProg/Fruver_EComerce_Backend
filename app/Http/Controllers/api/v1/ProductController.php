@@ -16,22 +16,35 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            "data" => ProductResource::collection(Product::all()),
-        ], 200);
+        $products = Product::all();
+        return view('crudProduct', compact('products'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
+
     public function store(ProductStoreRequest $request)
     {
-        $product = Product::create($request->all());
-        return response()->json([
-            "data" => new ProductResource($product),
-        ], 201);
+        try {
+            $product = Product::create($request->all());
+            return response()->json([
+                'data' => new ProductResource($product),
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al crear el producto',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
+
+    public function update(ProductUpdateRequest $request, Product $product)
+    {
+        $product->update($request->all());
+        return response()->json([
+            "data" => new ProductResource($product),
+        ], 200);
+    }
     /**
      * Display the specified resource.
      */
@@ -48,17 +61,6 @@ class ProductController extends Controller
         return response()->json(['data' => $sells], 200);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(ProductUpdateRequest $request, Product $product)
-    {
-        $product->update($request->all());
-        return response()->json([
-            "data"=> new ProductResource($product),
-        ],200);
-    }
     /**
      * Remove the specified resource from storage.
      */
