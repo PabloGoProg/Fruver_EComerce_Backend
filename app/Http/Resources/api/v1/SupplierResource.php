@@ -23,8 +23,6 @@ class SupplierResource extends JsonResource
             'phone_number' => $this->user->phone_number,
             'birthday' => $this->user->birthday,
             'address' => $this->user->address,
-            'status' => $this->user->status,
-            'user_type' => new UserTypeResource($this->user->userType),
         ];
     }
 }
