@@ -4,7 +4,7 @@ namespace App\Http\Requests\api\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserTypeUpdateRequest extends FormRequest
+class UpdateProductQuantityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,16 @@ class UserTypeUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "orderedQuantity" => "required|integer|min:1",
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'orderedQuantity.required' => 'The orderedQuantity field is required.',
+            'orderedQuantity.integer' => 'The orderedQuantity field must be an integer.',
+            'orderedQuantity.min' => 'The orderedQuantity field must be at least 1.',
         ];
     }
 }
