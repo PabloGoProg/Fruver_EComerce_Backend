@@ -4,7 +4,7 @@ namespace App\Http\Requests\api\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserTypeUpdateRequest extends FormRequest
+class AttachProductoToCartRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,15 @@ class UserTypeUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "orderedQuantity" => "integer|min:1",
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'orderedQuantity.integer' => 'La cantidad debe ser un numero',
+            'orderedQuantity.min' => 'La cantidad debe ser mayor a 0',
         ];
     }
 }

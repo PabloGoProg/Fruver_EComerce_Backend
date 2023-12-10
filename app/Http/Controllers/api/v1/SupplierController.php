@@ -14,7 +14,9 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = Supplier::orderBy('id', 'asc')->get();
+        $suppliers = Supplier::orderBy('id', 'asc')
+            ->get()
+            ->where('status', 'active');
 
         return response()->json([
             'data' => SupplierResource::collection($suppliers),
@@ -52,7 +54,7 @@ class SupplierController extends Controller
     public function destroy(string $id)
     {
         $supplier = Supplier::findOrFail($id);
-        $supplier->delete();
+        $supplier->status = 'inactive';
 
         return response()->json(null, 204);
     }
