@@ -23,7 +23,6 @@ class Supplier extends Model
     }
 
     protected $fillable = [
-        'name',
-        'RUT',
+        'RUT'
     ];
 }

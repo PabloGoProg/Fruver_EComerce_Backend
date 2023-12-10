@@ -51,3 +51,7 @@ Route::get('v1/products/{id_product}/sells', App\Http\Controllers\api\v1\Product
 Route::get('v1/sells/{id_sell}/products', App\Http\Controllers\api\v1\SellController::class.'@showSellProducts');
 
 
+//Cart routes
+Route::post('/v1/users/{user_id}/products/{product_id}', [App\Http\Controllers\api\v1\CartController::class, 'attachProduct']);
+Route::delete('/v1/users/{user_id}/products/{product_id}', [App\Http\Controllers\api\v1\CartController::class, 'detachProduct']);
+Route::get('/v1/users/{id}/products', [App\Http\Controllers\api\v1\CartController::class, 'getShoppingCart']);
