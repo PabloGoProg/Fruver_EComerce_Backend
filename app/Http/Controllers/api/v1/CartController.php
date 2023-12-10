@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Product;
 use App\Http\Requests\api\v1\AttachProductoToCartRequest;
 use App\Http\Resources\api\v1\CartProductResource;
 use App\Http\Requests\api\v1\UpdateProductQuantityRequest;
-use App\Models\User;
-use App\Models\Product;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CartController extends Controller
 {
-
     /**
      * Attach a product to the user cart
      */
