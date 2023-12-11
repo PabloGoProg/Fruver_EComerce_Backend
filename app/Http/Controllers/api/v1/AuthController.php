@@ -74,7 +74,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(Auth::user());
+        return response()->json(new UserResource(Auth::user()), 200);
     }
 
     /**
@@ -144,12 +144,18 @@ class AuthController extends Controller
 
     public function register(UserStoreRequest $request)
     {
-        $user = User::create($request->all());
-        $token =JWTAuth::fromUser($user);
+        $user = User::create(
+            [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'userType' => 2,
+            ]
+        );
+
         return response()->json(
             [
-                'data' => new UserResource($user),
-                'token' => $token
+                'data' => new UserResource($user)
             ],
             201
         );

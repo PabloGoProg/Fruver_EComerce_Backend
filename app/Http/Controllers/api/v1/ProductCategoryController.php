@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\api\v1;
+
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -8,6 +9,8 @@ use App\Models\Product;
 use App\Http\Resources\api\v1\CategoryResource;
 use App\Http\Requests\api\v1\CategoryStoreRequest;
 use App\Http\Requests\api\v1\CategoryUpdateRequest;
+use App\Http\Resources\api\v1\CategoryCollection;
+use App\Http\Resources\api\v1\ProductCategoryCollection;
 
 class ProductCategoryController extends Controller
 {
@@ -16,9 +19,7 @@ class ProductCategoryController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            "data" => CategoryResource::collection(ProductCategory::all()),
-        ], 200);
+        return new CategoryCollection(ProductCategory::paginate(5));
     }
 
     /**
@@ -48,9 +49,11 @@ class ProductCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategoryUpdateRequest $request, ProductCategory $productCategory)
+    public function update(CategoryUpdateRequest $request, string $category_id)
     {
+        $productCategory = ProductCategory::findOrFail($category_id);
         $productCategory->update($request->all());
+
         return response()->json([
             "data" => new CategoryResource($productCategory),
         ], 200);

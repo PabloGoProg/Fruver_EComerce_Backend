@@ -4,13 +4,14 @@ namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sell;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Resources\api\v1\SellResource;
 use App\Http\Requests\api\v1\SellStoreRequest;
 use App\Http\Requests\api\v1\SellUpdateRequest;
-use App\Models\User; // Asegúrate de importar el modelo User
-
-
+use App\Http\Resources\api\v1\CartProductResource;
+use App\Http\Resources\api\v1\SellCollection;
+use Illuminate\Support\Facades\Auth;
 
 class SellController extends Controller
 {
@@ -19,58 +20,62 @@ class SellController extends Controller
      */
     public function index()
     {
-        $sells = Sell::with('products')->orderBy('created_at', 'desc')->get();
-        return response()->json(['data' => SellResource::collection($sells)], 200);
+        $sells = Sell::with('products')->orderBy('created_at', 'desc')->paginate(5);
+
+        return new SellCollection($sells);
     }
 
-/**
- * Store a newly created resource in storage.
- */
-public function store(SellStoreRequest $request)
-{
 
-        // Imprime los productos antes de asociarlos a la venta
-        $products = $request->input('products');
-        dd($products);
-    // Obtiene el usuario usando el user_id proporcionado en la solicitud
-    $user = User::findOrFail($request->input('user_id'));
 
-    // Crea la venta asociada al usuario
-    $sell = $user->sells()->create([
-        'total_price' => $request->input('total_price'),
-        'status' => $request->input('status'),
-    ]);
-
-    // Adjunta productos a la venta si se proporcionan en la solicitud
-    if ($request->has('products')) {
-        $sell->products()->attach($request->input('products'));
-    }
-
-    return response()->json(['data' => $sell], 200);
-}
 
 
     /**
      * Display the specified resource.
      */
-    public function show(Sell $sell)
+    public function show(string $id)
     {
-        $sell->load('products');
-        return response()->json(['data' => new SellResource($sell)], 200);
+        $sell = Sell::findOrFail($id);
+
+        return response()->json([
+            'data' => new SellResource($sell)
+        ], 200);
     }
+
     public function showSellProducts($id_sell)
     {
         $sell = Sell::findOrFail($id_sell);
         $products = $sell->products;
-        return response()->json(['data' => $products], 200);
+        return response()->json([
+            'data' => new CartProductResource($products)
+        ], 200);
     }
+
     public function showProduct($id_sell, $id_product)
     {
-
         $sell = Sell::findOrFail($id_sell);
         $product = $sell->products()->findOrFail($id_product);
-        return response()->json(['sell' => $sell, 'product' => $product]);
+
+        return response()->json([
+            'data' => new CartProductResource($product)
+        ], 200);
     }
+
+    public function showUserSells($id_user)
+    {
+        $user = User::findOrFail($id_user);
+        $sells = $user->sells;
+        return response()->json([
+            'data' => SellResource::collection($sells)
+        ], 200);
+    }
+
+    public function showUserSell($id_user, $id_sell)
+    {
+        $user = User::findOrFail($id_user);
+        $sell = $user->sells()->findOrFail($id_sell);
+        return response()->json(['user' => $user, 'sell' => $sell]);
+    }
+
 
     /**
      * Update the specified resource in storage.

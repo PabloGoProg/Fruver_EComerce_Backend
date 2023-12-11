@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\UserCreated;
+use App\Models\Supplier;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -25,10 +26,12 @@ class CreateSupplierOnUserCreation
         $rut = $event->RUT;
 
         if ($user->user_type == 3) {
-            $user->supplier()->create([
-                'RUT' => $rut,
-                'relative_user' => $user->id,
-            ]);
+            Supplier::create(
+                [
+                    'RUT' => $rut,
+                    'user_id' => $user->id
+                ]
+            );
         }
     }
 }

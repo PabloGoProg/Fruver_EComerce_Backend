@@ -22,16 +22,11 @@ class SellStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'user_id' => 'required|exists:users,id',
             'total_price' => 'required|numeric',
             'status' => 'required|string',
-            'products' => 'array',
-            // Check if products exists in the database
-            'products.*' => 'exists:products,id',
-
         ];
     }
+
 
     /**
      * Get the error messages for the defined validation rules.

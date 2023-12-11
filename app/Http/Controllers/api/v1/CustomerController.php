@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\api\v1\CustomerCollection;
 use App\Http\Resources\api\v1\CustomerResource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,13 +17,11 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = User::orderBy('id', 'asc')
-            ->get()
             ->where('status', 'active')
-            ->where('user_type', 2);
+            ->where('user_type', 2)
+            ->paginate(5);
 
-        return response()->json([
-            'data' => CustomerResource::collection($customers),
-        ], 200);
+        return new CustomerCollection($customers);
     }
 
     /**

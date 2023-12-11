@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Http\Resources\api\v1\ProductTypeResource;
 use App\Http\Requests\api\v1\ProductTypeStoreRequest;
 use App\Http\Requests\api\v1\ProductTypeUpdateRequest;
+use App\Http\Resources\api\v1\ProductTypeCollection;
+
 class ProductTypeController extends Controller
 {
     /**
@@ -16,9 +18,7 @@ class ProductTypeController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            "data" => ProductTypeResource::collection(ProductType::all()),
-        ], 200);
+        return new ProductTypeCollection(ProductType::paginate(5));
     }
 
     /**
@@ -48,8 +48,9 @@ class ProductTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductTypeUpdateRequest $request, ProductType $productType)
+    public function update(ProductTypeUpdateRequest $request, string $type_id)
     {
+        $productType = ProductType::findOrFail($type_id);
         $productType->update($request->all());
 
         return response()->json([

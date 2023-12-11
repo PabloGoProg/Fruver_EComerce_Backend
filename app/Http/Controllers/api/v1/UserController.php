@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Http\Resources\api\v1\UserResource;
 use App\Http\Requests\api\v1\UserStoreRequest;
 use App\Http\Requests\api\v1\UserUpdateRequest;
+use App\Http\Resources\api\v1\UserCollection;
 
 class UserController extends Controller
 {
@@ -16,11 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::orderBy('id', 'asc')->get();
-
-        return response()->json([
-            'data' => UserResource::collection($users),
-        ], 200);
+        return new UserCollection(User::paginate(5));
     }
 
     /**
