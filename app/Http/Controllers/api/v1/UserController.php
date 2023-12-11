@@ -27,9 +27,7 @@ class UserController extends Controller
     {
         $user = User::create($request->all());
 
-        if ($request->user_status == 3) {
-            event(new UserCreated($user, $request->RUT));
-        }
+        event(new UserCreated($user, $request->RUT));
 
         return response()->json(
             [
