@@ -10,6 +10,7 @@ use App\Http\Requests\api\v1\ProductStoreRequest;
 use App\Http\Requests\api\v1\ProductUpdateRequest;
 use App\Models\ProductCategory;
 use App\Models\ProductType;
+use App\Http\Resources\api\v1\ProductCollection;
 
 class ProductController extends Controller
 {
@@ -31,7 +32,7 @@ class ProductController extends Controller
             return response()->json(['data' => ProductResource::collection($products)], 200);
         }
         $products = Product::all();
-        return response()->json(['data' => ProductResource::collection($products)], 200);
+        return new ProductCollection(Product::paginate(5));
     }
 
     /**
@@ -87,8 +88,8 @@ class ProductController extends Controller
     {
         $product->update($request->all());
         return response()->json([
-            "data"=> new ProductResource($product),
-        ],200);
+            "data" => new ProductResource($product),
+        ], 200);
     }
     /**
      * Remove the specified resource from storage.

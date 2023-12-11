@@ -5,6 +5,7 @@ namespace App\Http\Resources\api\v1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\api\v1\UserTypeResource;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends JsonResource
 {
@@ -23,7 +24,9 @@ class UserResource extends JsonResource
             'birthday' => $this->birthday,
             'address' => $this->address,
             'status' => $this->status,
-            'type' => new UserTypeResource($this->userType),
+            $this->mergeWhen(Auth::user()->user_type === 1, [
+                'user_type' => new UserTypeResource($this->userType),
+            ]),
         ];
     }
 }

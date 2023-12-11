@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\api\v1\SellResource;
 use App\Http\Requests\api\v1\SellStoreRequest;
 use App\Http\Requests\api\v1\SellUpdateRequest;
+use Illuminate\Support\Facades\Auth;
 
 class SellController extends Controller
 {
@@ -34,7 +35,9 @@ class SellController extends Controller
             );
             $user->products()->detach($product->id);
         }
-        return response()->json(['data' => $sell], 200);
+        return response()->json([
+            'data' => SellResource::collection($sells)
+        ], 200);
     }
 
     /**
@@ -43,22 +46,44 @@ class SellController extends Controller
     public function show(Sell $sell)
     {
         $sell->load('products');
-        return response()->json(['data' => new SellResource($sell)], 200);
+        return response()->json([
+            'data' => new SellResource($sell)
+        ], 200);
     }
 
     public function showSellProducts($id_sell)
     {
         $sell = Sell::findOrFail($id_sell);
         $products = $sell->products;
-        return response()->json(['data' => $products], 200);
+        return response()->json([
+            'data' => $products
+        ], 200);
     }
 
     public function showProduct($id_sell, $id_product)
     {
-
         $sell = Sell::findOrFail($id_sell);
         $product = $sell->products()->findOrFail($id_product);
-        return response()->json(['sell' => $sell, 'product' => $product]);
+        return response()->json([
+            'sell' => $sell,
+            'product' => $product
+        ]);
+    }
+
+    public function showUserSells($id_user)
+    {
+        $user = User::findOrFail($id_user);
+        $sells = $user->sells;
+        return response()->json([
+            'data' => SellResource::collection($sells)
+        ], 200);
+    }
+
+    public function showUserSell($id_user, $id_sell)
+    {
+        $user = User::findOrFail($id_user);
+        $sell = $user->sells()->findOrFail($id_sell);
+        return response()->json(['user' => $user, 'sell' => $sell]);
     }
 
     public function showUserSells($id_user)

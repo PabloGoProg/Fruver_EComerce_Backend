@@ -26,7 +26,7 @@ class UserStoreRequest extends FormRequest
             'email'   => 'required|max:255|min:7|string|email|unique:users,email',
             'password' => 'required|min:8|max:255|string',
             'user_type' => 'exists:user_types,id',
-            'RUT' => 'max:255|string|unique:suppliers,RUT'
+            'RUT' => 'max:255|string|unique:suppliers,RUT|nullable'
         ];
     }
 
