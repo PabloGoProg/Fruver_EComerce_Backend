@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Supplier extends Model
 {
@@ -13,7 +12,7 @@ class Supplier extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Supplier::class, 'product_supplier', 'supplier_id', 'product_id')
+        return $this->belongsToMany(Product::class, 'product_supplier', 'supplier_id', 'product_id')
             ->withPivot('id');
     }
 

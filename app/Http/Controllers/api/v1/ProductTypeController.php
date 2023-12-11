@@ -48,8 +48,9 @@ class ProductTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductTypeUpdateRequest $request, ProductType $productType)
+    public function update(ProductTypeUpdateRequest $request, string $type_id)
     {
+        $productType = ProductType::findOrFail($type_id);
         $productType->update($request->all());
 
         return response()->json([

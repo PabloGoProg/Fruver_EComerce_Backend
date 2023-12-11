@@ -7,6 +7,7 @@ use App\Models\Supplier;
 use App\Http\Resources\api\v1\SupplierResource;
 use App\Http\Requests\api\v1\SupplierUpdateRequest;
 use App\Http\Resources\api\v1\SupplierCollection;
+use App\Models\Product;
 
 class SupplierController extends Controller
 {
@@ -16,7 +17,6 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = Supplier::orderBy('id', 'asc')
-            ->where('status', 'active')
             ->paginate(5);
 
         return new SupplierCollection($suppliers);
@@ -37,7 +37,8 @@ class SupplierController extends Controller
     /**
      * get all products from a supplier.
      */
-    public function getProducts(string $id){
+    public function getProducts(string $id)
+    {
         $supplier = Supplier::findOrFail($id);
         $products = $supplier->products;
 
@@ -49,7 +50,8 @@ class SupplierController extends Controller
     /**
      * attach a product to a supplier.
      */
-    public function attachProduct(string $id, string $product_id){
+    public function attachProduct(string $id, string $product_id)
+    {
         $supplier = Supplier::findOrFail($id);
         $supplier->products()->attach($product_id);
 
@@ -61,7 +63,8 @@ class SupplierController extends Controller
     /**
      * detach a product from a supplier.
      */
-    public function detachProduct(string $id, string $product_id){
+    public function detachProduct(string $id, string $product_id)
+    {
         $supplier = Supplier::findOrFail($id);
         $supplier->products()->detach($product_id);
 
