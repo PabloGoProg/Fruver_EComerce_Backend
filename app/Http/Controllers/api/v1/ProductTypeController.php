@@ -9,6 +9,8 @@ use App\Models\Product;
 use App\Http\Resources\api\v1\ProductTypeResource;
 use App\Http\Requests\api\v1\ProductTypeStoreRequest;
 use App\Http\Requests\api\v1\ProductTypeUpdateRequest;
+use App\Http\Resources\api\v1\ProductTypeCollection;
+
 class ProductTypeController extends Controller
 {
     /**
@@ -16,9 +18,7 @@ class ProductTypeController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            "data" => ProductTypeResource::collection(ProductType::all()),
-        ], 200);
+        return new ProductTypeCollection(ProductType::paginate(5));
     }
 
     /**

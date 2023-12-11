@@ -8,6 +8,7 @@ use App\Models\UserType;
 use App\Http\Resources\api\v1\UserTypeResource;
 use App\Http\Requests\api\v1\UserTypeStoreRequest;
 use App\Http\Requests\api\v1\UserTypeUpdateRequest;
+use App\Http\Resources\api\v1\UserTypeCollection;
 
 class UserTypeController extends Controller
 {
@@ -16,11 +17,9 @@ class UserTypeController extends Controller
      */
     public function index()
     {
-        $userTypes = UserType::orderBy('id', 'asc')->get();
+        $userTypes = UserType::orderBy('id', 'asc')->paginate(5);
 
-        return response()->json([
-            'data' => UserTypeResource::collection($userTypes),
-        ], 200);
+        return new UserTypeCollection($userTypes);
     }
 
     /**
