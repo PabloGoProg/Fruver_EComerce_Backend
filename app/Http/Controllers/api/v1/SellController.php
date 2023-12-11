@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Resources\api\v1\SellResource;
 use App\Http\Requests\api\v1\SellStoreRequest;
 use App\Http\Requests\api\v1\SellUpdateRequest;
+use App\Http\Resources\api\v1\CartProductResource;
+use App\Http\Resources\api\v1\SellCollection;
 use Illuminate\Support\Facades\Auth;
 
 class SellController extends Controller
@@ -18,34 +20,18 @@ class SellController extends Controller
      */
     public function index()
     {
-        $sells = Sell::with('products')->orderBy('created_at', 'desc')->get();
-        return response()->json(['data' => SellResource::collection($sells)], 200);
-    }
+        $sells = Sell::with('products')->orderBy('created_at', 'desc')->paginate(5);
 
-    public function store(SellStoreRequest $request)
-    {
-        $sell = Sell::create($request->all());
-        $products = User::find($request->user_id)->products()->get();
-        $user = User::find($request->user_id);
-        // Attach products to the sell if provided in the request
-        foreach ($products as $product) {
-            $sell->products()->attach(
-                $product->id,
-                ['orderedQuantity' => $product->pivot->orderedQuantity]
-            );
-            $user->products()->detach($product->id);
-        }
-        return response()->json([
-            'data' => SellResource::collection($sell)
-        ], 200);
+        return new SellCollection($sells);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Sell $sell)
+    public function show(string $id)
     {
-        $sell->load('products');
+        $sell = Sell::findOrFail($id);
+
         return response()->json([
             'data' => new SellResource($sell)
         ], 200);
@@ -56,7 +42,7 @@ class SellController extends Controller
         $sell = Sell::findOrFail($id_sell);
         $products = $sell->products;
         return response()->json([
-            'data' => $products
+            'data' => new CartProductResource($products)
         ], 200);
     }
 
@@ -64,10 +50,10 @@ class SellController extends Controller
     {
         $sell = Sell::findOrFail($id_sell);
         $product = $sell->products()->findOrFail($id_product);
+
         return response()->json([
-            'sell' => $sell,
-            'product' => $product
-        ]);
+            'data' => new CartProductResource($product)
+        ], 200);
     }
 
     public function showUserSells($id_user)

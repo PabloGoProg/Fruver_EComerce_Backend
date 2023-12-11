@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Http\Resources\api\v1\CategoryResource;
 use App\Http\Requests\api\v1\CategoryStoreRequest;
 use App\Http\Requests\api\v1\CategoryUpdateRequest;
+use App\Http\Resources\api\v1\CategoryCollection;
 use App\Http\Resources\api\v1\ProductCategoryCollection;
 
 class ProductCategoryController extends Controller
@@ -18,7 +19,7 @@ class ProductCategoryController extends Controller
      */
     public function index()
     {
-        return new ProductCategoryCollection(ProductCategory::paginate(5));
+        return new CategoryCollection(ProductCategory::paginate(5));
     }
 
     /**

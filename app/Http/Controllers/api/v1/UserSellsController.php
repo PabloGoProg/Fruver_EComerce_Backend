@@ -20,22 +20,29 @@ class UserSellsController extends Controller
         // Gets the current authUser
         $user = User::find(Auth::user()->id);
         // Gets the sells from the user
-        $sells = User::find($user)->sells()->get();
+        $sells = $user->sells;
 
         return response()->json([
-            'data' => new sellResource($sells),
+            'data' => sellResource::collection($sells),
         ], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function GenerateSell(SellStoreRequest $request)
+    public function generateSell(Request $request)
     {
         // Gets the current authUser
-        $user = User::find(Auth::user()->id);
+        $user = User::find(auth()->user()->id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not authenticated'
+            ], 401);
+        }
+
         // Gets the products from the user cart
-        $products = User::find($user)->products()->get();
+        $products = $user->products;
 
         if ($products->isEmpty()) {
             return response()->json([
@@ -46,7 +53,7 @@ class UserSellsController extends Controller
         // Creates the sell
         $sell = Sell::create(
             [
-                'totalPrice' => $request->totalPrice,
+                'total_price' => 0,
                 'user_id' => $user->id,
                 'status' => 'pending'
             ]
@@ -58,6 +65,7 @@ class UserSellsController extends Controller
                 $product->id,
                 ['orderedQuantity' => $product->pivot->orderedQuantity]
             );
+            $sell->total_price += $product->pivot->orderedQuantity * $product->price;
             $user->products()->detach($product->id);
         }
 
@@ -69,31 +77,26 @@ class UserSellsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function showSingleSell(string $id)
     {
-    }
+        $sell = Sell::findOrFail($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
+        return response()->json([
+            'data' => new SellResource($sell),
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function cancelSell(string $id)
     {
-        //
+        $sell = Sell::findOrFail($id);
+        $sell->status = 'cancelled';
+        $sell->save();
+
+        return response()->json([
+            'data' => new SellResource($sell),
+        ], 200);
     }
 }

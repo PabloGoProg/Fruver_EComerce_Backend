@@ -129,7 +129,14 @@ class AuthController extends Controller
 
     public function register(UserStoreRequest $request)
     {
-        $user = User::create($request->all());
+        $user = User::create(
+            [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'userType' => 2,
+            ]
+        );
 
         return response()->json(
             [

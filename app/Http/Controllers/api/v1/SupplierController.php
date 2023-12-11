@@ -8,6 +8,7 @@ use App\Http\Resources\api\v1\SupplierResource;
 use App\Http\Requests\api\v1\SupplierUpdateRequest;
 use App\Http\Resources\api\v1\SupplierCollection;
 use App\Models\Product;
+use App\Models\User;
 
 class SupplierController extends Controller
 {
@@ -16,10 +17,14 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = Supplier::orderBy('id', 'asc')
+        $activeSuppliers = Supplier::with('user')
+            ->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->orderBy('id', 'asc')
             ->paginate(5);
 
-        return new SupplierCollection($suppliers);
+        return new SupplierCollection($activeSuppliers);
     }
 
     /**
@@ -28,6 +33,13 @@ class SupplierController extends Controller
     public function show(string $id)
     {
         $supplier = Supplier::findOrFail($id);
+        $realted_user = User::findOrFail($supplier->user_id);
+
+        if ($realted_user->status == 'inactive') {
+            return response()->json([
+                'data' => 'User not found',
+            ], 200);
+        }
 
         return response()->json([
             'data' => new SupplierResource($supplier),
@@ -40,6 +52,15 @@ class SupplierController extends Controller
     public function getProducts(string $id)
     {
         $supplier = Supplier::findOrFail($id);
+
+        $realted_user = User::findOrFail($supplier->user_id);
+
+        if ($realted_user->status == 'inactive') {
+            return response()->json([
+                'data' => 'User not found',
+            ], 200);
+        }
+
         $products = $supplier->products;
 
         return response()->json([
@@ -53,14 +74,25 @@ class SupplierController extends Controller
     public function attachProduct(string $id, string $product_id)
     {
         $supplier = Supplier::findOrFail($id);
+
+        $realted_user = User::findOrFail($supplier->user_id);
+
+        if ($realted_user->status == 'inactive') {
+            return response()->json([
+                'data' => 'User not found',
+            ], 200);
+        }
+
         $productos = $supplier->products;
-        foreach($productos as $product){
-            if($product->id == $product_id){
+
+        foreach ($productos as $product) {
+            if ($product->id == $product_id) {
                 return response()->json([
                     'data' => 'Product already exists',
                 ], 200);
             }
         }
+
         $supplier->products()->attach($product_id);
         return response()->json([
             'data' => new SupplierResource($supplier),
@@ -73,6 +105,15 @@ class SupplierController extends Controller
     public function detachProduct(string $id, string $product_id)
     {
         $supplier = Supplier::findOrFail($id);
+
+        $realted_user = User::findOrFail($supplier->user_id);
+
+        if ($realted_user->status == 'inactive') {
+            return response()->json([
+                'data' => 'User not found',
+            ], 200);
+        }
+
         $supplier->products()->detach($product_id);
 
         return response()->json([
@@ -86,7 +127,24 @@ class SupplierController extends Controller
     public function update(SupplierUpdateRequest $request, string $id)
     {
         $supplier = Supplier::findOrFail($id);
-        $supplier->update($request->all());
+
+        $realted_user = User::findOrFail($supplier->user_id);
+
+        if ($realted_user->status == 'inactive') {
+            return response()->json([
+                'data' => 'User not found',
+            ], 200);
+        }
+
+        $realted_user = User::findOrFail($supplier->user_id);
+
+        $realted_user->update($request->all());
+
+        $supplier->update(
+            [
+                'RUT' => $request->RUT,
+            ]
+        );
 
         return response()->json([
             'data' => new SupplierResource($supplier),
@@ -99,7 +157,15 @@ class SupplierController extends Controller
     public function destroy(string $id)
     {
         $supplier = Supplier::findOrFail($id);
-        $supplier->status = 'inactive';
+        $realted_user = User::findOrFail($supplier->user_id);
+
+        $supplier->products()->detach();
+
+        $realted_user->update(
+            [
+                'status' => 'inactive',
+            ]
+        );
 
         return response()->json(null, 204);
     }

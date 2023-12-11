@@ -30,6 +30,16 @@ class CartController extends Controller
                 ], 401);
             }
 
+            $productos = $user->products;
+
+            foreach ($productos as $product) {
+                if ($product->id == $request->product_id) {
+                    return response()->json([
+                        'data' => 'Product already exists',
+                    ], 200);
+                }
+            }
+
             // Find the target product
             $targetProduct = Product::findOrFail($request->product_id);
 
