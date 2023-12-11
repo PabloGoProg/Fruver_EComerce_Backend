@@ -35,6 +35,42 @@ class SupplierController extends Controller
     }
 
     /**
+     * get all products from a supplier.
+     */
+    public function getProducts(string $id){
+        $supplier = Supplier::findOrFail($id);
+        $products = $supplier->products;
+
+        return response()->json([
+            'data' => $products,
+        ], 200);
+    }
+
+    /**
+     * attach a product to a supplier.
+     */
+    public function attachProduct(string $id, string $product_id){
+        $supplier = Supplier::findOrFail($id);
+        $supplier->products()->attach($product_id);
+
+        return response()->json([
+            'data' => new SupplierResource($supplier),
+        ], 200);
+    }
+
+    /**
+     * detach a product from a supplier.
+     */
+    public function detachProduct(string $id, string $product_id){
+        $supplier = Supplier::findOrFail($id);
+        $supplier->products()->detach($product_id);
+
+        return response()->json([
+            'data' => new SupplierResource($supplier),
+        ], 200);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(SupplierUpdateRequest $request, string $id)

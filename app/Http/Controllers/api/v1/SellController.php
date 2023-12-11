@@ -19,6 +19,22 @@ class SellController extends Controller
     public function index()
     {
         $sells = Sell::with('products')->orderBy('created_at', 'desc')->get();
+        return response()->json(['data' => SellResource::collection($sells)], 200);
+    }
+
+    public function store(SellStoreRequest $request)
+    {
+        $sell = Sell::create($request->all());
+        $products = User::find($request->user_id)->products()->get();
+        $user = User::find($request->user_id);
+        // Attach products to the sell if provided in the request
+        foreach ($products as $product) {
+            $sell->products()->attach(
+                $product->id,
+                ['orderedQuantity' => $product->pivot->orderedQuantity]
+            );
+            $user->products()->detach($product->id);
+        }
         return response()->json([
             'data' => SellResource::collection($sells)
         ], 200);
@@ -61,6 +77,20 @@ class SellController extends Controller
         return response()->json([
             'data' => SellResource::collection($sells)
         ], 200);
+    }
+
+    public function showUserSell($id_user, $id_sell)
+    {
+        $user = User::findOrFail($id_user);
+        $sell = $user->sells()->findOrFail($id_sell);
+        return response()->json(['user' => $user, 'sell' => $sell]);
+    }
+
+    public function showUserSells($id_user)
+    {
+        $user = User::findOrFail($id_user);
+        $sells = $user->sells;
+        return response()->json(['data' => SellResource::collection($sells)], 200);
     }
 
     public function showUserSell($id_user, $id_sell)
