@@ -9,6 +9,7 @@ use App\Http\Requests\api\v1\UpdateProductQuantityRequest;
 use App\Models\User;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -16,20 +17,30 @@ class CartController extends Controller
     /**
      * Attach a product to the user cart
      */
-    public function attachProduct(string $user_id, AttachProductoToCartRequest $request)
+    public function attachProduct(AttachProductoToCartRequest $request)
     {
         try {
-            $user = User::findOrFail($user_id)
-                ->where('status', 'active')
-                ->first();
+            // Get the authenticated user
+            $user = User::find(Auth::user()->id);
+
+            // Check if the user is authenticated
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
+            // Find the target product
             $targetProduct = Product::findOrFail($request->product_id);
 
+            // Attach the product to the user's cart
             $user->products()->attach([
                 $targetProduct->id => [
                     'orderedQuantity' => $request->orderedQuantity
                 ]
             ]);
 
+            // Return the updated user cart
             return response()->json([
                 'data' => CartProductResource::collection($user->products),
             ], 200);
@@ -37,19 +48,20 @@ class CartController extends Controller
             return response()->json([
                 'message' => 'User or product not found'
             ], 404);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'message' => 'An error occurred'
+            ], 500);
         }
     }
 
     /**
      * Detach a product from the user cart
      */
-    public function detachProduct(string $user_id, string $product_id)
+    public function detachProduct(string $product_id)
     {
         try {
-            // Find the user and the product
-            $user = User::findOrFail($user_id)
-                ->where('status', 'active')
-                ->first();
+            $user = User::find(Auth::user()->id);
             $targetProduct = Product::findOrFail($product_id);
 
             // Check if the product is in the user cart
@@ -70,12 +82,16 @@ class CartController extends Controller
             return response()->json([
                 'message' => 'User or product not found'
             ], 404);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'message' => 'An error occurred'
+            ], 500);
         }
     }
 
-    public function updateProductQuantity(string $user_id, string $product_id, UpdateProductQuantityRequest $request)
+    public function updateProductQuantity(string $product_id, UpdateProductQuantityRequest $request)
     {
-        $user = User::find($user_id);
+        $user = User::find(Auth::user()->id);
         $targetProduct = Product::find($product_id);
 
         $user->products()->updateExistingPivot($targetProduct->id, [
@@ -90,20 +106,19 @@ class CartController extends Controller
     /**
      * Get the user cart
      */
-    public function getShoppingCart(string $user_id)
+    public function getShoppingCart()
     {
         try {
-            $user = User::findOrFail($user_id)
-                ->where('status', 'active')
-                ->first();
+            $user = User::find(Auth::user()->id);
 
+            // If the user is authenticated, return the shopping cart
             return response()->json([
                 'data' => CartProductResource::collection($user->products),
             ], 200);
-        } catch (ModelNotFoundException $exception) {
+        } catch (\Exception $exception) {
             return response()->json([
-                'message' => 'User not found'
-            ], 404);
+                'message' => 'An error occurred',
+            ], 500);
         }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\api\v1;
+
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -8,6 +9,7 @@ use App\Models\Product;
 use App\Http\Resources\api\v1\CategoryResource;
 use App\Http\Requests\api\v1\CategoryStoreRequest;
 use App\Http\Requests\api\v1\CategoryUpdateRequest;
+use App\Http\Resources\api\v1\ProductCategoryCollection;
 
 class ProductCategoryController extends Controller
 {
@@ -16,9 +18,7 @@ class ProductCategoryController extends Controller
      */
     public function index()
     {
-        return response()->json([
-            "data" => CategoryResource::collection(ProductCategory::all()),
-        ], 200);
+        return new ProductCategoryCollection(ProductCategory::paginate(5));
     }
 
     /**

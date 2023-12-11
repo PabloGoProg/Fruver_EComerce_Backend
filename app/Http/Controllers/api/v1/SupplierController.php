@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Supplier;
 use App\Http\Resources\api\v1\SupplierResource;
 use App\Http\Requests\api\v1\SupplierUpdateRequest;
+use App\Http\Resources\api\v1\SupplierCollection;
 
 class SupplierController extends Controller
 {
@@ -15,12 +16,10 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = Supplier::orderBy('id', 'asc')
-            ->get()
-            ->where('status', 'active');
+            ->where('status', 'active')
+            ->paginate(5);
 
-        return response()->json([
-            'data' => SupplierResource::collection($suppliers),
-        ], 200);
+        return new SupplierCollection($suppliers);
     }
 
     /**

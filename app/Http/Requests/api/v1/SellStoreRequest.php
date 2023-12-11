@@ -26,10 +26,20 @@ class SellStoreRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'total_price' => 'required|numeric',
             'status' => 'required|string',
-            'products' => 'array',
-            // Check if products exists in the database
-            //'products.*' => 'exists:products,id',
+        ];
+    }
 
+    public function messages(): array
+    {
+        return [
+            'user_id.required' => 'El id del usuario es requerido',
+            'user_id.exists' => 'El id del usuario no existe',
+
+            'total_price.required' => 'El precio total es requerido',
+            'total_price.numeric' => 'El precio total debe ser un numero',
+
+            'status.required' => 'El estado es requerido',
+            'status.string' => 'El estado debe ser un string',
         ];
     }
 }
