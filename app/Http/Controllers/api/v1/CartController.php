@@ -52,7 +52,7 @@ class CartController extends Controller
 
             // Return the updated user cart
             return response()->json([
-                'data' => CartProductResource::collection($user->products),
+                'data' => 'Product added to cart',
             ], 200);
         } catch (ModelNotFoundException $exception) {
             return response()->json([
@@ -77,16 +77,23 @@ class CartController extends Controller
             // Check if the product is in the user cart
             $relatedProduct = $user->products()->wherePivot('product_id', $targetProduct->id);
 
-            if (!$relatedProduct) {
-                return response()->json([
-                    'message' => 'Product not found in user cart'
-                ], 404);
+            $productos = $user->products;
+            $found = false;
+            foreach ($productos as $product) {
+                if ($product->id == $product_id) {
+                    $found = true;
+                }
             }
 
-            // Detach the product from the user cart
+            if (!$found) {
+                return response()->json([
+                    'data' => 'Product not found',
+                ], 200);
+            }
+
             $user->products()->detach($targetProduct);
             return response()->json([
-                'data' => CartProductResource::collection($user->products),
+                'data' => 'Product removed successfully',
             ], 200);
         } catch (ModelNotFoundException $exception) {
             return response()->json([

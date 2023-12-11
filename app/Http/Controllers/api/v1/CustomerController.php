@@ -76,16 +76,20 @@ class CustomerController extends Controller
     public function destroy(string $id)
     {
         try {
-            $customer = User::findOrFail($id)
-                ->where('user_type', 2)
-                ->where('status', 'active')
-                ->first();
-            $customer->status = 'inactive';
-            $customer->save();
+            $customer = User::findOrFail($id);
 
-            return response()->json([
-                'data' => 'Customer removed successfully',
-            ], 204);
+            if ($customer->status == 'active') {
+                $customer->status = 'inactive';
+                $customer->save();
+
+                return response()->json([
+                    'data' => new CustomerResource($customer),
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Customer already inactive'
+                ], 400);
+            }
         } catch (ModelNotFoundException $exception) {
             return response()->json([
                 'message' => 'Customer not found'

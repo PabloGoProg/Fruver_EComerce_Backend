@@ -37,12 +37,14 @@ class SellController extends Controller
         ], 200);
     }
 
-    public function showSellProducts($id_sell)
+    public function showSellProducts(string $id_sell)
     {
         $sell = Sell::findOrFail($id_sell);
+
         $products = $sell->products;
+
         return response()->json([
-            'data' => new CartProductResource($products)
+            'data' => $products
         ], 200);
     }
 
@@ -76,23 +78,25 @@ class SellController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SellUpdateRequest $request, Sell $sell)
+    public function update(SellUpdateRequest $request, string $id)
     {
+        $sell = Sell::findOrFail($id);
         $sell->update($request->all());
-        // Sync products for the sell if provided in the request
-        if ($request->has('products')) {
-            $sell->products()->sync($request->input('products'));
-        }
-        return response()->json(['data' => $sell], 200);
+
+        return response()->json([
+            'data' => $sell
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Sell $sell)
+    public function destroy(string $id)
     {
+        $sell = Sell::findOrFail($id);
         $sell->products()->detach(); // Detach products before deleting the sell
         $sell->delete();
+
         return response()->json(null, 204);
     }
 }

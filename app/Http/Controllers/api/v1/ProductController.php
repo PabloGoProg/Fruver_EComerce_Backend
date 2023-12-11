@@ -19,16 +19,21 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('category')){
+        if ($request->has('category')) {
             $category_name = $request->category;
             $category = ProductCategory::where('name', $category_name)->first();
             $products = $category->products;
             return response()->json(['data' => ProductResource::collection($products)], 200);
         }
-        if($request->has('type')){
+        if ($request->has('type')) {
             $type_name = $request->type;
             $type = ProductType::where('name', $type_name)->first();
             $products = $type->products;
+            return response()->json(['data' => ProductResource::collection($products)], 200);
+        }
+        if ($request->has('name')) {
+            $name = $request->name;
+            $products = Product::where('name', 'like', '%' . $name . '%')->get();
             return response()->json(['data' => ProductResource::collection($products)], 200);
         }
         $products = Product::all();
