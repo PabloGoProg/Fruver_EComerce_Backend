@@ -23,6 +23,6 @@ class Supplier extends Model
 
     protected $fillable = [
         'RUT',
-        'relative_user'
+        'user_id'
     ];
 }
