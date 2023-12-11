@@ -92,6 +92,21 @@ Route::delete(
     [App\Http\Controllers\api\v1\SupplierController::class, 'destroy']
 );
 
+Route::get(
+    '/v1/suppliers/{id}/products',
+    [App\Http\Controllers\api\v1\SupplierController::class, 'getProducts']
+);
+
+Route::post(
+    '/v1/suppliers/{id}/products/{product_id}',
+    [App\Http\Controllers\api\v1\SupplierController::class, 'attachProduct']
+);
+
+Route::delete(
+    '/v1/suppliers/{id}/products/{product_id}',
+    [App\Http\Controllers\api\v1\SupplierController::class, 'detachProduct']
+);
+
 // ----------------------------------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------------------------------
@@ -163,8 +178,8 @@ Route::get(
     App\Http\Controllers\api\v1\ProductTypeController::class . '@show'
 );
 
-// ----------------------------------------------------------------------------------------------------
-
+Route::get('v1/products/sort/lower', App\Http\Controllers\api\v1\ProductController::class . '@lower');
+Route::get('v1/products/sort/higher', App\Http\Controllers\api\v1\ProductController::class . '@higher');
 // ----------------------------------------------------------------------------------------------------
 
 Route::apiResource(
@@ -198,19 +213,19 @@ Route::apiResource(
 );
 Route::get(
     'v1/types/{type_id}',
-    App\Http\Controllers\api\v1\ProductTypeController::class . 'showProducts'
+    App\Http\Controllers\api\v1\ProductTypeController::class . '@show'
 );
 Route::post(
     'v1/types',
-    App\Http\Controllers\api\v1\ProductTypeController::class . 'store'
+    App\Http\Controllers\api\v1\ProductTypeController::class . '@store'
 );
 Route::put(
     'v1/types/{type_id}',
-    App\Http\Controllers\api\v1\ProductTypeController::class . 'update'
+    App\Http\Controllers\api\v1\ProductTypeController::class . '@update'
 );
 Route::delete(
     'v1/types/{type_id}',
-    App\Http\Controllers\api\v1\ProductTypeController::class . 'destroy'
+    App\Http\Controllers\api\v1\ProductTypeController::class . '@destroy'
 );
 
 // ----------------------------------------------------------------------------------------------------

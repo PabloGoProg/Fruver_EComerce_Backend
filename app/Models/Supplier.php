@@ -13,7 +13,7 @@ class Supplier extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Supplier::class, 'product_supplier', 'product_id', 'supplier_id')
+        return $this->belongsToMany(Supplier::class, 'product_supplier', 'supplier_id', 'product_id')
             ->withPivot('id');
     }
 
@@ -23,7 +23,7 @@ class Supplier extends Model
     }
 
     protected $fillable = [
-        'name',
         'RUT',
+        'relative_user'
     ];
 }
