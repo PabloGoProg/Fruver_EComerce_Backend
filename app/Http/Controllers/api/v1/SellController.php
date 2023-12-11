@@ -36,7 +36,7 @@ class SellController extends Controller
             $user->products()->detach($product->id);
         }
         return response()->json([
-            'data' => SellResource::collection($sells)
+            'data' => SellResource::collection($sell)
         ], 200);
     }
 
@@ -86,19 +86,6 @@ class SellController extends Controller
         return response()->json(['user' => $user, 'sell' => $sell]);
     }
 
-    public function showUserSells($id_user)
-    {
-        $user = User::findOrFail($id_user);
-        $sells = $user->sells;
-        return response()->json(['data' => SellResource::collection($sells)], 200);
-    }
-
-    public function showUserSell($id_user, $id_sell)
-    {
-        $user = User::findOrFail($id_user);
-        $sell = $user->sells()->findOrFail($id_sell);
-        return response()->json(['user' => $user, 'sell' => $sell]);
-    }
 
     /**
      * Update the specified resource in storage.

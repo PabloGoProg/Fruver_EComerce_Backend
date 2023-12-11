@@ -62,6 +62,7 @@ class UserTypeController extends Controller
 
         return response()->json(
             [
+                "ut" => $userType,
                 'data' => new UserTypeResource($userType)
             ],
             200

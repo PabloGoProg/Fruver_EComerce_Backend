@@ -130,7 +130,7 @@ Route::get(
 
 Route::post(
     '/v1/suppliers/{id}/products/{product_id}',
-    [App\Http\Controllers\api\v1\SupplierController::class, 'attachProduct']
+    App\Http\Controllers\api\v1\SupplierController::class . '@attachProduct'
 );
 
 Route::delete(
@@ -186,6 +186,7 @@ Route::get(
 
 Route::get('v1/products/sort/lower', App\Http\Controllers\api\v1\ProductController::class . '@lower');
 Route::get('v1/products/sort/higher', App\Http\Controllers\api\v1\ProductController::class . '@higher');
+
 // ----------------------------------------------------------------------------------------------------
 
 Route::apiResource(
@@ -216,23 +217,6 @@ Route::delete(
 Route::apiResource(
     'v1/types',
     App\Http\Controllers\api\v1\ProductTypeController::class
-);
-
-Route::get(
-    'v1/types/{type_id}',
-    App\Http\Controllers\api\v1\ProductTypeController::class . '@show'
-);
-Route::post(
-    'v1/types',
-    App\Http\Controllers\api\v1\ProductTypeController::class . '@store'
-);
-Route::put(
-    'v1/types/{type_id}',
-    App\Http\Controllers\api\v1\ProductTypeController::class . '@update'
-);
-Route::delete(
-    'v1/types/{type_id}',
-    App\Http\Controllers\api\v1\ProductTypeController::class . '@destroy'
 );
 
 // ----------------------------------------------------------------------------------------------------
