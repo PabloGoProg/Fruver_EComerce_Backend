@@ -53,8 +53,15 @@ class SupplierController extends Controller
     public function attachProduct(string $id, string $product_id)
     {
         $supplier = Supplier::findOrFail($id);
+        $productos = $supplier->products;
+        foreach($productos as $product){
+            if($product->id == $product_id){
+                return response()->json([
+                    'data' => 'Product already exists',
+                ], 200);
+            }
+        }
         $supplier->products()->attach($product_id);
-
         return response()->json([
             'data' => new SupplierResource($supplier),
         ], 200);
