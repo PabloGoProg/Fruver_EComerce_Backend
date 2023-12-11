@@ -1,7 +1,5 @@
 <?php
 
-// comment
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -10,13 +8,34 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-// use Tymon\JWTAuth\Contracts\JWTSubject;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable //implements JWTSubject
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_user', 'user_id', 'product_id')
+            ->withPivot('id', 'orderedQuantity');
+    }
+
+    public function supplier()
+    {
+        return $this->hasOne(Supplier::class);
+    }
+
+    public function sells(): HasMany
+    {
+        return $this->hasMany(Sell::class);
+    }
+
+    public function userType(): BelongsTo
+    {
+        return $this->belongsTo(UserType::class, 'user_type');
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -54,27 +73,6 @@ class User extends Authenticatable //implements JWTSubject
         'password' => 'hashed',
     ];
 
-    public function products(): BelongsToMany
-    {
-        return $this->belongsToMany(Product::class, 'product_user', 'user_id', 'product_id')
-            ->withPivot('id', 'orderedQuantity');
-    }
-
-    public function sells(): HasMany
-    {
-        return $this->hasMany(Sell::class);
-    }
-
-    public function supplier(): BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
-    }
-
-    public function user_type(): BelongsTo
-    {
-        return $this->belongsTo(UserType::class);
-    }
-
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -93,5 +91,10 @@ class User extends Authenticatable //implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->user_type === 1;
     }
 }
