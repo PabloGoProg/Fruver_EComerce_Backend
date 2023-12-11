@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
@@ -23,6 +25,20 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+
+     public function login2(Request $LoginRequest)
+     {
+         $credentials = $LoginRequest->only('email', 'password');
+         try {
+             $token = JWTAuth::attempt($credentials);
+             if (!$token) {
+                 return response()->json(['error' => 'invalid_credentials'], 400);
+             }
+         } catch (JWTException $e) {
+             return response()->json(['error' => 'could_not_create_token'], 500);
+         }
+            return response()->json(compact('token'));
+     }
     public function login(Request $request)
     {
         try {
@@ -75,7 +91,6 @@ class AuthController extends Controller
             'message' => 'Successfully logged out'
         ], 201);
     }
-
     /**
      * Refresh a token.
      *
@@ -130,12 +145,28 @@ class AuthController extends Controller
     public function register(UserStoreRequest $request)
     {
         $user = User::create($request->all());
-
+        $token =JWTAuth::fromUser($user);
         return response()->json(
             [
-                'data' => new UserResource($user)
+                'data' => new UserResource($user),
+                'token' => $token
             ],
             201
         );
+
+    }
+    public function profile(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['message' => 'Sesión cerrada o usuario no autenticado'], 401);
+            }
+
+            return response()->json(new UserResource($user));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error retrieving user profile'], 500);
+        }
     }
 }

@@ -24,7 +24,7 @@ class UserStoreRequest extends FormRequest
         return [
             'name'    => 'required|regex:/^[\pL\s]+$/u|max:255|min:7|string',
             'email'   => 'required|max:255|min:7|string|email|unique:users,email',
-            'password' => 'required|min:8|max:255|string',
+            'password' => 'required|min:8|max:255|string|confirmed',
             'user_type' => 'exists:user_types,id',
             'RUT' => 'max:255|string|unique:suppliers,RUT'
         ];
@@ -39,7 +39,7 @@ class UserStoreRequest extends FormRequest
 
             'email.required' => 'El email es requerido',
             'email.email' => 'El email debe ser válido',
-            'email.unique' => 'El email ya existe',
+            'email.unique' => 'El email ya existe verifica que no tengas una cuenta creada',
             'email.min' => 'El email debe tener al menos 7 caracteres',
 
             'password.required' => 'La contraseña es requerida',
@@ -48,6 +48,7 @@ class UserStoreRequest extends FormRequest
             'user_type.exists' => 'El tipo de usuario no existe',
 
             'RUT.unique' => 'El RUT ya existe',
+            'name.confirmed' => 'Las contraseñas no coinciden'
         ];
     }
 }
